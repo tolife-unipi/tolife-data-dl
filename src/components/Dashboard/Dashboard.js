@@ -1,5 +1,6 @@
 import { Component } from "react";
 import Card from "../Card/Card";
+// eslint-disable-next-line
 import API from "../../utils/API";
 import Toast from '../../utils/Toast';
 import download from "../../utils/Downloader";
@@ -37,6 +38,7 @@ export default class Dashboard extends Component {
 		let content = await res.json();
 		// console.debug(content);
 
+		// eslint-disable-next-line
 		content = content.filter((elem => elem.kitId == kit_id));
 
 		if(content.length === 0){
