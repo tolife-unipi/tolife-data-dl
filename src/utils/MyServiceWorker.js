@@ -9,6 +9,7 @@
 export default class MyServiceWorker {
 	static register(){
 
+		// Se non siamo in ambiente di produzione
 		if(process.env.NODE_ENV !== 'production') return;
 
 		if ('serviceWorker' in navigator) {
