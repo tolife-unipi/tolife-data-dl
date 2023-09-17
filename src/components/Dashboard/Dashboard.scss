@@ -1,0 +1,35 @@
+@use "sass:color";
+@use '../../styles/global' as *;
+@use '../../styles/inputs' with (
+	$background-color: color.adjust($background-color, $whiteness: 8%),
+	$base-color: $base-color,
+	$text-color: $text-color
+);
+
+.Dashboard {
+	display: grid;
+	gap: 20px;
+	grid-template-areas: 
+		"kit_id sensor_name"
+		"start_date end_date"
+		"button button";
+
+	> *:nth-child(1) {grid-area: kit_id;}
+	> *:nth-child(2) {grid-area: sensor_name;}
+	> *:nth-child(3) {grid-area: start_date;}
+	> *:nth-child(4) {grid-area: end_date;}
+	> *:nth-child(5) {grid-area: button;}
+
+	> span {
+		@extend %input;
+	}
+
+	@media screen and (max-width: 650px){
+		grid-template-areas: 
+		"kit_id"
+		"sensor_name"
+		"start_date"
+		"end_date"
+		"button";
+	}
+}

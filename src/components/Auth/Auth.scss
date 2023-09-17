@@ -1,0 +1,39 @@
+@use "sass:color";
+@use '../../styles/global' as *;
+@use '../../styles/inputs' with (
+	$background-color: color.adjust($background-color, $whiteness: 8%),
+	$base-color: $base-color,
+	$text-color: $text-color
+);
+
+.Auth {
+	display: grid;
+	gap: 20px;
+	grid-template-areas: 
+		"backend backend backend"
+		"username button password";
+
+	> *:nth-child(1) {grid-area: backend;}
+	> *:nth-child(2) {grid-area: username;}
+	> *:nth-child(3) {grid-area: password;}
+	> *:nth-child(4) {grid-area: button;}
+
+	> span {
+		@extend %input;
+	}
+
+	@media screen and (max-width: 1390px){
+		grid-template-areas: 
+		"backend backend"
+		"username password"
+		"button button";
+	}
+
+	@media screen and (max-width: 650px){
+		grid-template-areas: 
+		"backend"
+		"username"
+		"password"
+		"button";
+	}
+}

@@ -1,0 +1,35 @@
+@use "sass:color";
+@use '../../styles/global' as *;
+
+header {
+	background-color: color.adjust($background-color, $whiteness: 8%);
+	// text-align: center;
+	padding: 15px 5vw;
+	margin-bottom: 5vh;
+	box-shadow: 0 1px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12), 0 3px 1px -2px rgba(0,0,0,.2);
+
+	> h1 {
+		display: inline-block;
+		margin: 10px;
+		font-size: 45px;
+	}
+}
+
+footer {
+	background-color: color.adjust($background-color, $whiteness: 2%);
+	margin-top: 5vh;
+	text-align: center;
+	padding: 20px 50px;
+}
+
+main {
+	max-width: 1280px;
+	width: 60%;
+	margin: auto;
+	display: grid;
+	gap: 50px;
+
+	@media screen and (max-width: 900px){
+		width: 95%;
+	}
+}

@@ -1,0 +1,21 @@
+@use "sass:color";
+@use '../../styles/global' as *;
+
+section.Card {
+	background-color: color.adjust($background-color, $whiteness: 8%);
+	box-shadow: 0 1px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12), 0 3px 1px -2px rgba(0,0,0,.2);
+	border-radius: 4px;
+
+	> .Card-title {
+		margin: 0;
+		padding: 20px;
+		border-bottom: 1px solid $base-color; 
+		background: no-repeat fixed url(./background.png);
+		background-size: cover;
+		border-radius: 4px 4px 0 0;
+	}
+
+	> .Card-content {
+		padding: 20px;
+	}
+}
