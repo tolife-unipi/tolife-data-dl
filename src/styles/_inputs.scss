@@ -17,6 +17,7 @@ $base-color: white !default;
 		border-radius: 4px;
 		width: calc(100% - 24px);
 		outline: none;
+		margin-top: 8px;
 
 		&:disabled{
 			border-color: darken($background-color, 3%);
@@ -37,7 +38,7 @@ $base-color: white !default;
 
 		+ label {
 			position: absolute;
-			top: -8px;
+			top: 0;
 			left: 20px;
 			padding: 0 10px;
 			background-color: $background-color;
@@ -47,6 +48,45 @@ $base-color: white !default;
 
 	> select {
 		width: 100%;
+	}
+
+	> input[type=checkbox]{
+		opacity: 0;
+		width: 0;
+		height: 0;
+		margin: 0;
+
+		+ label {
+			user-select: none;
+			cursor: pointer;
+			font-size: 14px;
+
+			&::before {
+				font-weight: bold;
+				margin-right: 5px;
+				text-align: center;
+				font-size: 15px;
+				color: $base-color;
+				width: 20px;
+				height: 20px;
+				display: inline-block;
+				content: ' ';
+				vertical-align: middle;
+				border-radius: 4px;
+				border: 2px solid darken($text-color, 30%);
+			}
+		}
+
+		&:checked + label::before {content: '✓';}
+	}
+}
+
+fieldset {
+	border: 2px solid darken($text-color, 30%);
+	border-radius: 4px;
+
+	> legend {
+		padding: 0 10px;
 	}
 }
 
@@ -58,6 +98,7 @@ button {
 	font-size: 18px;
 	cursor: pointer;
 	padding: 10px;
+	margin-top: 8px;
 
 	&:hover{
 		border-color: $base-color;

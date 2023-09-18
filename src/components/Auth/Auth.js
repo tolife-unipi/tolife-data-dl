@@ -13,13 +13,17 @@ export default class Auth extends Component{
 			backend: localStorage.getItem('backend') ?? 'https://api-rawdatastore.techedgegroup.es', // url del backend
 			username: localStorage.getItem('username') ?? '', // username per ottenere l'accesso
 			password: localStorage.getItem('password') ?? '', // password per ottenere l'accesso
-			is_logged: false // se il login ha avuto successo
+			is_logged: false, // se il login ha avuto successo
+			loading: false // se qualche cosa sta ancora lavorando
 		}
 	}
 
 	/** Si collega al backend. */
 	login = async () => {
+		this.setState({loading: true});
+
 		const {backend, username, password} = this.state;
+
 		const api = new API(new URL(backend), username, password);
 		let res = await api.authorize();
 		if(!res.ok){
@@ -27,6 +31,7 @@ export default class Auth extends Component{
 			const content = await res.json();
 			// Notifico l'utente
 			Toast(content.error_description)
+			this.setState({loading: false});
 			return;
 		}
 		
@@ -42,7 +47,7 @@ export default class Auth extends Component{
 		Toast('Success')
 
 		// Confermo la corretta autenticazione
-		this.setState({is_logged: true});
+		this.setState({is_logged: true, loading: false});
 	}
 
 	/** Si scollega dal backend. */
@@ -55,9 +60,9 @@ export default class Auth extends Component{
 	}
 
 	render(){
-		const {backend, username, password, is_logged} = this.state;
+		const {backend, username, password, is_logged, loading} = this.state;
 		return (
-			<Card title="Auth">
+			<Card title="Auth" loading={loading}>
 				<form 
 					className='Auth'
 					method='POST'

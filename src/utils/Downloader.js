@@ -1,17 +1,27 @@
+import JSZip from "jszip";
+
 /**
  * Scarica i file come csv
- * @param {Array} data data da scaricare
- * @param {string} name nome del file
+ * @param {Object} data data da scaricare
+ * @param {Object} data.kit_id
+ * @param {Object} data.kit_id.sensor_name
  */
-export default function download(data, name='data') {
+export default async function download(data, name='data') {
+
+	const zip = new JSZip();
+
+	for(const kit_id in data){
+		const kit_id_folder = zip.folder(kit_id);
+
+		for(const sensor_name in data[kit_id]){
+			kit_id_folder.file(sensor_name+'.csv', convertToCSV(data[kit_id][sensor_name]))
+		}
+	}
+
+	const blob = await zip.generateAsync({type:"blob"});
 	const link = document.createElement("a");
-
-	const file = new Blob([convertToCSV(data)], { type: 'text/csv' });
-
-	link.href = URL.createObjectURL(file);
-
-	link.download = `${name}.csv`;
-
+	link.href = URL.createObjectURL(blob);
+	link.download = `data.zip`;
 	link.click();
 	URL.revokeObjectURL(link.href);
 }

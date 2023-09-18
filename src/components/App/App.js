@@ -18,7 +18,7 @@ export default class App extends Component{
 
 	render(){
 		
-		const version = 'DEV';
+		const version = process.env.NODE_ENV === 'development' ? 'DEV' : '1.0.0';
 
 		return (
 			<>

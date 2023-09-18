@@ -7,12 +7,40 @@ section.Card {
 	border-radius: 4px;
 
 	> .Card-title {
+		position: relative;
 		margin: 0;
 		padding: 20px;
-		border-bottom: 1px solid $base-color; 
+		// border-bottom: 2px solid $base-color; 
 		background: no-repeat fixed url(./background.png);
 		background-size: cover;
-		border-radius: 4px 4px 0 0;
+		// border-radius: 4px 4px 0 0;
+
+		&::after {
+			content: ' ';
+			display: block;
+			height: 2px;
+			width: 100%;
+			position: absolute;
+			left: 0;
+			bottom: -1px;
+			background: $base-color;
+			background-repeat: repeat-x;
+			background-position: 0 0;
+		}
+	}
+
+	&.loader > .Card-title::after {
+		background: linear-gradient(90deg, $base-color 80%, transparent 10%);
+		background-size: 10% 2px;
+		animation: loading 10s linear infinite;
+		@keyframes loading{
+			from {
+				background-position: 0 0;
+			}
+			to {
+				background-position: 100% 0;
+			}
+		}
 	}
 
 	> .Card-content {

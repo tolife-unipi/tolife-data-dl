@@ -8,28 +8,45 @@
 
 .Dashboard {
 	display: grid;
-	gap: 20px;
+	gap: 12px;
 	grid-template-areas: 
-		"kit_id sensor_name"
+		"kit_id kit_id"
 		"start_date end_date"
+		"sensor_name sensor_name"
 		"button button";
 
 	> *:nth-child(1) {grid-area: kit_id;}
-	> *:nth-child(2) {grid-area: sensor_name;}
-	> *:nth-child(3) {grid-area: start_date;}
-	> *:nth-child(4) {grid-area: end_date;}
+	> *:nth-child(2) {grid-area: start_date;}
+	> *:nth-child(3) {grid-area: end_date;}
+	> *:nth-child(4) {grid-area: sensor_name;}
 	> *:nth-child(5) {grid-area: button;}
 
-	> span {
+	> span, fieldset > span {
 		@extend %input;
+	}
+
+	> fieldset {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 10px;
+		padding: 5px 10px 10px 10px;
+		
+		@media screen and (max-width: 1390px){grid-template-columns: repeat(2, 1fr);}
+		@media screen and (max-width: 650px){grid-template-columns: 1fr;}
+
+		> fieldset {
+			display: flex;
+			gap: 5px;
+			flex-direction: column;
+		}
 	}
 
 	@media screen and (max-width: 650px){
 		grid-template-areas: 
 		"kit_id"
-		"sensor_name"
 		"start_date"
 		"end_date"
+		"sensor_name"
 		"button";
 	}
 }
