@@ -21,7 +21,7 @@ export default class Dashboard extends Component {
 
 	/**
 	 * Gestisce l'invio e la ricezione dei dati
-	 * @param {*} event 
+	 * @param {Event} event 
 	 */
 	formSubmitHandler = async (event) => {
 		event.preventDefault();
@@ -32,6 +32,8 @@ export default class Dashboard extends Component {
 		const api = this.props.api;
 
 		const {kit_ids, sensors_name, start_date, end_date} = this.state;
+
+		console.log(this.state)
 
 		/**
 		 * data = {
@@ -58,7 +60,7 @@ export default class Dashboard extends Component {
 			let content = await res.json();
 			for(const kit_id of kit_ids){
 				// eslint-disable-next-line
-				let tmp = content.filter((elem => elem.kitId == kit_id));
+				let tmp = content.filter((elem => elem.kit_id == kit_id));
 				if(tmp.length > 0){
 					if(!Object.hasOwn(data, kit_id)){
 						// se la proprietà kit_id non è stata ancora inizializzata
@@ -83,7 +85,7 @@ export default class Dashboard extends Component {
 	 * Gestisce l'input dei kit Id
 	 * @param {Event} event 
 	 */
-	kitIdsInputHandler = (event) => this.setState({kit_ids: event.target.value.split(',').map(elem => parseInt(elem))});
+	kitIdsInputHandler = (event) => this.setState({kit_ids: event.target.value.split(',').map(elem => elem.trim())});
 
 	/**
 	 * Gestisce l'input della data di inizio
@@ -121,7 +123,7 @@ export default class Dashboard extends Component {
 							name='kits_id'
 							id='kits_id'
 							onChange={this.kitIdsInputHandler}
-							pattern="^\d+(\s*,\s*\d+)*"
+							pattern="^\w+(\s*,\s*\w+)*"
 							placeholder="64, 32, 123, ..."
 							required={true}
 						/>
