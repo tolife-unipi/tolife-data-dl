@@ -44,28 +44,29 @@ export default class Dashboard extends Component {
 		 */
 		let data = {}
 		
-		for(const kit_id of kit_ids){
-			let tmp = {}
-			for(const sensor_name of sensors_name){
-				let res = await api.getSensorsData(sensor_name, start_date, end_date);
+		for(const sensor_name of sensors_name){
+			let res = await api.getSensorsData(sensor_name, start_date, end_date);
 
-				if(!res.ok) {
-					if(res.status === 401){/* ERROR: Non deve accadere perchè l'autenticazione automatica all'interno delle api non ha funzionato*/}
-					Toast('Error: ' + res.statusText);
-					this.setState({loading: false});
-					return;
-				}
-
-				/** @type {Array} */
-				let content = await res.json();
-
-				content = content.filter((elem => elem.kitId === kit_id));
-
-				if(content.length > 0) tmp[sensor_name] = content;
+			if(!res.ok) {
+				if(res.status === 401){/* ERROR: Non deve accadere perchè l'autenticazione automatica all'interno delle api non ha funzionato*/}
+				Toast('Error: ' + res.statusText);
+				this.setState({loading: false});
+				return;
 			}
 
-			if(Object.keys(tmp).length > 0)
-				data[kit_id] = tmp;
+			/** @type {Array} */
+			let content = await res.json();
+			for(const kit_id of kit_ids){
+				// eslint-disable-next-line
+				let tmp = content.filter((elem => elem.kitId == kit_id));
+				if(tmp.length > 0){
+					if(!Object.hasOwn(data, kit_id)){
+						// se la proprietà kit_id non è stata ancora inizializzata
+						data[kit_id] = {};
+					}
+					data[kit_id][sensor_name] = tmp;
+				}
+			}	
 		}
 
 		if(Object.keys(data).length === 0){
@@ -74,7 +75,6 @@ export default class Dashboard extends Component {
 			return;
 		}
 
-		// console.debug(data);
 		await download(data);
 		this.setState({loading: false});
 	}
