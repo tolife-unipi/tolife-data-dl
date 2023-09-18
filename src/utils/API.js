@@ -42,7 +42,9 @@ export default class API {
 	 * @param {string} end_date 
 	 */
 	async getSensorsData(sensor_name, start_date, end_date){
-		if(this.expires > new Date()) this.authorize();
+		if(this.expires < new Date()){
+			await this.authorize();
+		}
 
 		const url = new URL(`sensors/${sensor_name}/filterByDate`,this.url)
 		url.search = new URLSearchParams({

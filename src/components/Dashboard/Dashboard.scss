@@ -28,8 +28,8 @@
 	> fieldset {
 		display: grid;
 		grid-template-columns: repeat(4, 1fr);
-		gap: 10px;
-		padding: 5px 10px 10px 10px;
+		gap: 9px;
+		padding: 5px 12px 12px 12px;
 		
 		@media screen and (max-width: 1565px){grid-template-columns: repeat(2, 1fr);}
 		@media screen and (max-width: 650px){grid-template-columns: 1fr;}

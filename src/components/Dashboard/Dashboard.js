@@ -33,8 +33,6 @@ export default class Dashboard extends Component {
 
 		const {kit_ids, sensors_name, start_date, end_date} = this.state;
 
-		console.log(this.state)
-
 		/**
 		 * data = {
 		 * 	 [kit_id]: {
