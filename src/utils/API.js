@@ -30,7 +30,7 @@ export default class API {
 			// se il login ha avuto successo mi salvo il token
 			const content = await res.json();
 			this.token = content.access_token;
-			this.expires = new Date(Date.now() + content.expires_in)
+			this.expires = new Date(Date.now() + content.expires_in * 1000)
 		}
 		return res;
 	}
@@ -42,24 +42,37 @@ export default class API {
 	 * @param {string} end_date 
 	 */
 	async getSensorsData(sensor_name, start_date, end_date){
-		if(this.expires < new Date()){
-			await this.authorize();
-		}
+		if(this.expires < new Date()) await this.authorize();
 
-		const url = new URL(`sensors/${sensor_name}/filterByDate`,this.url)
+		const url = new URL(`sensors/${sensor_name}/filterByDate`,this.url);
 		url.search = new URLSearchParams({
 			start_date: start_date,
 			end_date: end_date 
-		}).toString()
+		}).toString();
 
 		const res = await fetch(url, {
 			method: "GET",
 			headers: {
 				'Authorization': `Bearer ${this.token}`
 			},
-		})
+		});
 
 		return res;
 	}
 
+	/** Restituisce la lista dei nomi dei sensori. */
+	async getSensorsName(){
+		if(this.expires < new Date()) await this.authorize();
+
+		const url = new URL('sensors',this.url);
+
+		const res = await fetch(url, {
+			method: "GET",
+			headers: {
+				'Authorization': `Bearer ${this.token}`
+			},
+		});
+
+		return res;
+	}
 }
