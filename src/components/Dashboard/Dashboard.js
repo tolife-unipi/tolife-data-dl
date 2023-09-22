@@ -1,9 +1,6 @@
 import { Component } from "react";
 import Card from "../Card/Card";
-// eslint-disable-next-line
-import API from "../../utils/API";
 import Toast from '../../utils/Toast';
-import download from "../../utils/Downloader";
 import './Dashboard.scss';
 
 export default class Dashboard extends Component {
@@ -15,7 +12,7 @@ export default class Dashboard extends Component {
 			sensors_name: [], // elenco di sensori selezionati
 			start_date: '', // data di inizio della ricerca
 			end_date: '', // data di fine della ricerca
-			loading: false // se qualche cosa sta ancora lavorando
+			loading: false, // se qualche cosa sta ancora lavorando
 		}
 	}
 
@@ -28,54 +25,24 @@ export default class Dashboard extends Component {
 
 		this.setState({loading: true});
 
-		/** @type {API} */
-		const api = this.props.api;
-
 		const {kit_ids, sensors_name, start_date, end_date} = this.state;
+		const {downloader} = this.props;
 
-		/**
-		 * data = {
-		 * 	 [kit_id]: {
-		 * 	   [sensor_name]: {
-		 *       content
-		 *     },...	
-		 * 	 },...
-		 * }
-		 */
 		let data = {}
-		
-		for(const sensor_name of sensors_name){
-			let res = await api.getSensorsData(sensor_name, start_date, end_date);
-
-			if(!res.ok) {
-				if(res.status === 401){/* ERROR: Non deve accadere perchè l'autenticazione automatica all'interno delle api non ha funzionato*/}
-				Toast('Error: ' + res.statusText);
-				this.setState({loading: false});
-				return;
-			}
-
-			/** @type {Array} */
-			let content = await res.json();
-			for(const kit_id of kit_ids){
-				// eslint-disable-next-line
-				let tmp = content.filter((elem => elem.kit_id == kit_id));
-				if(tmp.length > 0){
-					if(!Object.hasOwn(data, kit_id)){
-						// se la proprietà kit_id non è stata ancora inizializzata
-						data[kit_id] = {};
-					}
-					data[kit_id][sensor_name] = tmp;
-				}
-			}	
-		}
-
-		if(Object.keys(data).length === 0){
-			Toast('Empty');
+		try {
+			data = await downloader.fetchData(kit_ids, sensors_name, start_date, end_date);
+		} catch (error) {
+			Toast(error.message);
 			this.setState({loading: false});
 			return;
 		}
 
-		await download(data);
+		if(Object.keys(data).length === 0){
+			Toast('Empty');
+		} else {
+			await downloader.download(data);
+		}
+
 		this.setState({loading: false});
 	}
 

@@ -4,7 +4,7 @@ import './App.scss';
 import logo from './logo.png'
 import Auth from '../Auth/Auth';
 import Dashboard from '../Dashboard/Dashboard';
-
+import Downloader from '../../utils/Downloader';
 
 export default class App extends Component{
 
@@ -12,7 +12,7 @@ export default class App extends Component{
 		super(props);
 
 		this.state = {
-			api: null
+			api: null // API
 		}
 	}
 
@@ -30,7 +30,7 @@ export default class App extends Component{
 					<Auth onConnect={x => this.setState({api: x})}/>
 
 					{this.state.api &&
-						<Dashboard api={this.state.api}/>
+						<Dashboard downloader={new Downloader(this.state.api)}/>
 					}
 				</main>
 				<footer>Ver. {version}</footer>
