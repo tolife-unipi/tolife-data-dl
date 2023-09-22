@@ -25,12 +25,18 @@ export default class Auth extends Component{
 		const {backend, username, password} = this.state;
 
 		const api = new API(new URL(backend), username, password);
-		let res = await api.authorize();
+		let res = null;
+		try {
+			res = await api.authorize();
+		} catch(error){
+			Toast(error.message);
+			this.setState({loading: false});
+			return;
+		}
+
 		if(!res.ok){
-			// Login Fallito
 			const content = await res.json();
-			// Notifico l'utente
-			Toast(content.error_description)
+			Toast(content.error_description);
 			this.setState({loading: false});
 			return;
 		}
