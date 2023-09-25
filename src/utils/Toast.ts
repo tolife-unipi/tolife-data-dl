@@ -1,8 +1,6 @@
 
-/**
- * @param {string} msg 
- */
-export default function Toast(msg) {
+/** Crea un messaggio Toast. */
+export default function Toast(msg: string) {
 	let toast = document.createElement('div');
 	toast.classList.add('Toast');
 

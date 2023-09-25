@@ -1,22 +1,37 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 
 import Card from '../Card/Card';
 import API from '../../utils/API';
 import Toast from '../../utils/Toast';
 import './Auth.scss';
 
-export default class Auth extends Component{
-	constructor(props){
-		super(props);
+interface AuthProps {
+	/** Funzione utilizzata per aggiornare le API della classe App */
+	onConnect: (api:API|null) => void
+}
 
-		this.state = {
-			backend: localStorage.getItem('backend') ?? 'https://api-rawdatastore.techedgegroup.es', // url del backend
-			username: localStorage.getItem('username') ?? '', // username per ottenere l'accesso
-			password: localStorage.getItem('password') ?? '', // password per ottenere l'accesso
-			is_logged: false, // se il login ha avuto successo
-			loading: false // se qualche cosa sta ancora lavorando
-		}
-	}
+interface AuthState {
+	/** url del backend */
+	backend: string,
+	/** username per ottenere l'accesso */
+	username: string,
+	/** password per ottenere l'accesso */
+	password: string,
+	/** se il login ha avuto successo */
+	is_logged: boolean,
+	/** se qualche cosa sta ancora lavorando */
+	loading: boolean
+}
+
+export default class Auth extends Component<AuthProps,AuthState>{
+	
+	state:AuthState = {
+		backend: localStorage.getItem('backend') ?? 'https://api-rawdatastore.techedgegroup.es',
+		username: localStorage.getItem('username') ?? '',
+		password: localStorage.getItem('password') ?? '',
+		is_logged: false,
+		loading: false
+	};
 
 	/** Si collega al backend. */
 	login = async () => {
@@ -25,11 +40,11 @@ export default class Auth extends Component{
 		const {backend, username, password} = this.state;
 
 		const api = new API(new URL(backend), username, password);
-		let res = null;
+		let res:Response;
 		try {
 			res = await api.authorize();
 		} catch(error){
-			Toast(error.message);
+			Toast((error as Error).message);
 			this.setState({loading: false});
 			return;
 		}

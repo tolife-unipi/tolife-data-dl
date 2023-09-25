@@ -1,26 +1,40 @@
-import { Component } from "react";
+import React, { Component } from "react";
 import Card from "../Card/Card";
 import Toast from '../../utils/Toast';
 import './Dashboard.scss';
+import Downloader from "../../utils/Downloader";
 
-export default class Dashboard extends Component {
-	constructor(props){
-		super(props);
+interface DashboardProps {
+	/** Classe per il download dei dati */
+	downloader: Downloader
+}
 
-		this.state = {
-			kit_ids: [], // elenco di kit id selezionati
-			sensors_name: [], // elenco di sensori selezionati
-			start_date: '', // data di inizio della ricerca
-			end_date: '', // data di fine della ricerca
-			loading: false, // se qualche cosa sta ancora lavorando
-		}
-	}
+interface DashboardState {
+	/** elenco di kit id selezionati */
+	kit_ids: string[],
+	/** elenco di sensori selezionati */
+	sensors_name: string[],
+	/** data di inizio della ricerca */
+	start_date: string,
+	/** data di fine della ricerca */
+	end_date: string,
+	/** se qualche cosa sta ancora lavorando */
+	loading: boolean
+}
 
-	/**
-	 * Gestisce l'invio e la ricezione dei dati
-	 * @param {Event} event 
-	 */
-	formSubmitHandler = async (event) => {
+
+export default class Dashboard extends Component<DashboardProps,DashboardState> {
+
+	state:DashboardState = {
+		kit_ids: [],
+		sensors_name: [],
+		start_date: '',
+		end_date: '',
+		loading: false,
+	};
+
+	/** Gestisce l'invio e la ricezione dei dati */
+	formSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 
 		this.setState({loading: true});
@@ -32,7 +46,7 @@ export default class Dashboard extends Component {
 		try {
 			data = await downloader.fetchData(kit_ids, sensors_name, start_date, end_date);
 		} catch (error) {
-			Toast(error.message);
+			Toast((error as Error).message);
 			this.setState({loading: false});
 			return;
 		}
@@ -46,29 +60,26 @@ export default class Dashboard extends Component {
 		this.setState({loading: false});
 	}
 
-	/**
-	 * Gestisce l'input dei kit Id
-	 * @param {Event} event 
-	 */
-	kitIdsInputHandler = (event) => this.setState({kit_ids: event.target.value.split(',').map(elem => elem.trim())});
+	/** Gestisce l'input dei kit Id */
+	kitIdsInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => this.setState({kit_ids: event.target.value.split(',').map(elem => elem.trim())});
 
 	/**
 	 * Gestisce l'input della data di inizio
 	 * @param {Event} event 
 	 */
-	startDateInputHandler = (event) => this.setState({start_date: event.target.value});
+	startDateInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => this.setState({start_date: event.target.value});
 
 	/**
 	 * Gestisce l'input della data di fine
 	 * @param {Event} event 
 	 */
-	endDateInputHandler = (event) => this.setState({end_date: event.target.value});
+	endDateInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => this.setState({end_date: event.target.value});
 
 	/**
 	 * Gestisce l'input dei sensori
 	 * @param {Event} event 
 	 */
-	sensorsInputHandler = (event) => {
+	sensorsInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
 		if(event.target.checked)
 			this.setState({sensors_name: this.state.sensors_name.concat([event.target.value])});
 		else

@@ -1,6 +1,6 @@
 import './Card.scss'
 
-export default function Card({title, children, loading=false}) {
+export default function Card({title, children, loading=false}: CardProps) {
 	return (
 		<section className={'Card' + (loading ? ' loader':'')}>
 			{title && (
@@ -11,4 +11,10 @@ export default function Card({title, children, loading=false}) {
 			</div>
 		</section>
 	);
+}
+
+interface CardProps {
+	title: string,
+	children: string | JSX.Element | JSX.Element[],
+	loading: boolean
 }

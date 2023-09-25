@@ -1,12 +1,12 @@
 export default class API {
+	url: URL;
+	username: string;
+	password: string;
+	token: string | null;
+	expires: Date | null;
 
-	/**
-	 * Collegamento con le REST API
-	 * @param {URL} url 
-	 * @param {string} username 
-	 * @param {string} password 
-	 */
-	constructor(url, username, password){
+	/** Collegamento con le REST API */
+	constructor(url:URL, username:string, password:string){
 		this.url = url;
 		this.username = username;
 		this.password = password;
@@ -15,7 +15,7 @@ export default class API {
 	}
 
 	/** Aggiorna il token */
-	async authorize(){
+	async authorize(): Promise<Response> {
 		const res = await fetch(new URL('authorize',this.url), {
 			method: "POST",
 			headers: {
@@ -35,14 +35,9 @@ export default class API {
 		return res;
 	}
 
-	/**
-	 * Restituisce i dati dei sensori presi dal database
-	 * @param {string} sensor_name 
-	 * @param {string} start_date 
-	 * @param {string} end_date 
-	 */
-	async getSensorsData(sensor_name, start_date, end_date){
-		if(this.expires < new Date()) await this.authorize();
+	/** Restituisce i dati dei sensori presi dal database */
+	async getSensorsData(sensor_name:string, start_date:string, end_date:string): Promise<Response> {
+		if(!this.expires || this.expires < new Date()) await this.authorize();
 
 		const url = new URL(`sensors/${sensor_name}/filterByDate`,this.url);
 		url.search = new URLSearchParams({
@@ -61,8 +56,8 @@ export default class API {
 	}
 
 	/** Restituisce la lista dei nomi dei sensori. */
-	async getSensorsName(){
-		if(this.expires < new Date()) await this.authorize();
+	async getSensorsName(): Promise<Response> {
+		if(!this.expires || this.expires < new Date()) await this.authorize();
 
 		const url = new URL('sensors',this.url);
 

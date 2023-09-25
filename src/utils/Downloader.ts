@@ -1,32 +1,17 @@
 import JSZip from "jszip";
-// eslint-disable-next-line
-import Api from "./API"
+import API from "./API"
 
 export default class Downloader {
+	api: API;
 
-	/** @param {Api} api */
-	constructor(api) {
+	constructor(api:API) {
 		this.api = api;
 	}
 
-	/**
-	 * Restituisce i dati dei sensori relativi ai kit id selezionati
-	 * @param {string[]} kits 
-	 * @param {string[]} sensors 
-	 * @param {string} start_date 
-	 * @param {string} end_date 
-	 */
-	async fetchData(kits, sensors, start_date, end_date) {
-		/**
-		 * data = {
-		 * 	 [kit_id]: {
-		 * 	   [sensor_name]: {
-		 *       content
-		 *     },...	
-		 * 	 },...
-		 * }
-		 */
-		let data = {}
+	/** Restituisce i dati dei sensori relativi ai kit id selezionati */
+	async fetchData(kits:string[], sensors:string[], start_date:string, end_date:string) {
+
+		let data:ContentData = {}
 			
 		console.debug('start_date: ' + start_date + '\nend_date: ' + end_date);
 		for(const sensor_name of sensors){
@@ -37,15 +22,16 @@ export default class Downloader {
 				throw new Error(res.statusText);
 			}
 	
-			/** @type {Array} */
-			let content = await res.json();
-			console.debug(sensor_name + ': ' + content.length.toString())
+			let content:SensorData[] = await res.json();
+
+			console.debug(sensor_name + ': ' + content.length.toString());
+
 			for(const kit_id of kits){
 				// eslint-disable-next-line
 				let tmp = content.filter((elem => elem.kit_id == kit_id));
-				console.debug('- ' + sensor_name + '.' + kit_id +': ' + tmp.length.toString())
+				console.debug('- ' + sensor_name + '.' + kit_id +': ' + tmp.length.toString());
 				if(tmp.length > 0){
-					if(!Object.hasOwn(data, kit_id)){
+					if(data[kit_id] !== undefined){
 						// se la proprietà kit_id non è stata ancora inizializzata
 						data[kit_id] = {};
 					}
@@ -62,11 +48,11 @@ export default class Downloader {
 	 * @param {Object} data.kit_id
 	 * @param {Object} data.kit_id.sensor_name
 	 */
-	async download(data, name='data'){
+	async download(data:ContentData, name:string='data'){
 		const zip = new JSZip();
 
 		for(const kit_id in data){
-			const kit_id_folder = zip.folder(kit_id);
+			const kit_id_folder = zip.folder(kit_id) as JSZip;
 
 			for(const sensor_name in data[kit_id]){
 				kit_id_folder.file(sensor_name+'.csv', this._convertToCSV(data[kit_id][sensor_name]))
@@ -81,12 +67,8 @@ export default class Downloader {
 		URL.revokeObjectURL(link.href);
 	}
 
-	/**
-	 * Converte JSON a CSV
-	 * @param {Array} data 
-	 * @returns 
-	 */
-	_convertToCSV(data) {
+	/** Converte JSON a CSV */
+	_convertToCSV(data:any[]) {
 		const array = [Object.keys(data[0])].concat(data)
 	
 		return array.map(it => {
@@ -94,5 +76,20 @@ export default class Downloader {
 		}).join('\n')
 	}
 }
+
+interface SensorData {
+	kit_id: string,
+	timestamp: number,
+	[propName: string]: any
+}
+
+interface KitData {
+	[sensor_name:string]: SensorData[]
+}
+
+interface ContentData {
+	[kit_id:string]: KitData
+}
+
 
 
