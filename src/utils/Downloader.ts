@@ -42,12 +42,7 @@ export default class Downloader {
 		return data;
 	}
 
-	/**
-	 * Scarica i file come csv
-	 * @param {Object} data data da scaricare
-	 * @param {Object} data.kit_id
-	 * @param {Object} data.kit_id.sensor_name
-	 */
+	/** Scarica i file come csv */
 	async download(data:ContentData, name:string='data'){
 		const zip = new JSZip();
 

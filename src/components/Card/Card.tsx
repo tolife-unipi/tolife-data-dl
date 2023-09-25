@@ -1,4 +1,5 @@
-import './Card.scss'
+import React from 'react';
+import './Card.scss';
 
 export default function Card({title, children, loading=false}: CardProps) {
 	return (
