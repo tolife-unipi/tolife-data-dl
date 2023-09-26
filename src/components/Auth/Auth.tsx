@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 import Card from '../Card/Card';
 import API from '../../utils/API';

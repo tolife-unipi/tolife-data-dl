@@ -1,4 +1,4 @@
-import API from '../utils/API';
+// import API from '../utils/API';
 
 test('placeholder', () => {
 	expect(true).toBeTruthy();

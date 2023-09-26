@@ -1,11 +1,10 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import './App.scss';
 import Auth from '../Auth/Auth';
 import Dashboard from '../Dashboard/Dashboard';
 import Downloader from '../../utils/Downloader';
 import API from '../../utils/API';
-
-const logo = require('./logo.png');
+import logo from './logo.png';
 
 interface AppState {
 	/** REST API */
@@ -18,7 +17,7 @@ export default class App extends Component<{},AppState>{
 
 	render(){
 		
-		const version = process.env.NODE_ENV === 'development' ? 'DEV' : process.env.REACT_APP_VERSION as string;
+		const version = process.env.NODE_ENV === 'development' ? 'DEV' : process.env.APP_VERSION as string;
 
 		return (
 			<>

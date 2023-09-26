@@ -31,7 +31,7 @@ export default class Downloader {
 				let tmp = content.filter((elem => elem.kit_id == kit_id));
 				console.debug('- ' + sensor_name + '.' + kit_id +': ' + tmp.length.toString());
 				if(tmp.length > 0){
-					if(data[kit_id] !== undefined){
+					if(data[kit_id] === undefined){
 						// se la proprietà kit_id non è stata ancora inizializzata
 						data[kit_id] = {};
 					}
