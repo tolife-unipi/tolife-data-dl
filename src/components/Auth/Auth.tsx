@@ -2,6 +2,7 @@ import { Component } from 'react';
 
 import Card from '../Card/Card';
 import API from '../../utils/API';
+// import APIMock from '../../tests/mocks/APIMock';
 import Toast from '../../utils/Toast';
 import './Auth.scss';
 
@@ -40,6 +41,7 @@ export default class Auth extends Component<AuthProps,AuthState>{
 		const {backend, username, password} = this.state;
 
 		const api = new API(new URL(backend), username, password);
+		// const api = new APIMock(['D_0', 'D_1'], 500000);
 		let res:Response;
 		try {
 			res = await api.authorize();

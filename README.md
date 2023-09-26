@@ -55,4 +55,5 @@ In caso di corretta autenticazione verrà visualizzato un toast con la scritta `
 
 <img src=./img/dashboard.png height=450>
 
-// TODO:
+A questo punto è sufficiente riempire i vari campi e selezionare i sensori di interesse.\
+Il processo di estrazione dei dati potrebbe essere lungo, quindi è necessario avere pazienza.
