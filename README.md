@@ -17,7 +17,7 @@ npm ci
 npm run build
 
 # Avvio
-serve build
+npm run preview
 ```
 
 ### Docker
