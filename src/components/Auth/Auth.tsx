@@ -45,6 +45,7 @@ export default class Auth extends Component<AuthProps,AuthState>{
 			res = await api.authorize();
 		} catch(error){
 			Toast((error as Error).message);
+			console.error(error);
 			this.setState({loading: false});
 			return;
 		}
@@ -95,7 +96,7 @@ export default class Auth extends Component<AuthProps,AuthState>{
 
 					<span>
 						<input 
-							type='text'
+							type='url'
 							name='backend'
 							value={backend}
 							placeholder={backend}
@@ -103,7 +104,7 @@ export default class Auth extends Component<AuthProps,AuthState>{
 							onChange={e => this.setState({backend: e.target.value})}
 							readOnly={is_logged}
 							required={true}
-							pattern="^(http|https)://.+"
+							pattern="^(http|https)://[^\s]+"
 						/>
 						<label htmlFor='backend'>Backend</label>
 					</span>

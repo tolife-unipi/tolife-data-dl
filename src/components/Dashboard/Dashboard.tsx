@@ -47,6 +47,7 @@ export default class Dashboard extends Component<DashboardProps,DashboardState> 
 			data = await downloader.fetchData(kit_ids, sensors_name, start_date, end_date);
 		} catch (error) {
 			Toast((error as Error).message);
+			console.error(error);
 			this.setState({loading: false});
 			return;
 		}

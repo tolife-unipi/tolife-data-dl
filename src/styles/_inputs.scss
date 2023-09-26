@@ -7,7 +7,7 @@ $base-color: white !default;
 %input {
 	position: relative;
 
-	> input[type=text], > input[type=password], > input[type=email], > input[type=number], > input[type=date], > input[type=datetime-local], > select {
+	> input[type=text], > input[type=password], > input[type=email], > input[type=url], > input[type=number], > input[type=date], > input[type=datetime-local], > select {
 		appearance: textfield;
 		background: $background-color;
 		font-size: 18px;
