@@ -22,6 +22,9 @@ describe('Downloader Unit Test', () => {
 				}else{
 					expect(data[kit_id][sensor_name]).toBeDefined();
 					expect(data[kit_id][sensor_name].length).toBeGreaterThan(0);
+					for(const entry of data[kit_id][sensor_name]){
+						expect(entry).toHaveProperty('kit_id');
+					}
 				}
 			}
 		}	
