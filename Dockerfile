@@ -1,14 +1,12 @@
 # ==== CONFIGURE =====
 FROM node:16-alpine 
 WORKDIR /app
-COPY ./package*.json ./
+COPY ./ ./
 
 LABEL maintainer="UNIPI"
 
 # ==== BUILD =====
 RUN npm ci 
-COPY ./src ./src
-COPY ./public ./public
 RUN npm run build
 
 # ==== RUN =======
