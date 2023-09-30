@@ -62,7 +62,7 @@ export default class Dashboard extends Component<DashboardProps,DashboardState> 
 		if(Object.keys(data).length === 0){
 			Toast('Empty');
 		} else {
-			await downloader.download(data);
+			await downloader.download(data, start_date);
 		}
 
 		this.setState({loading: false});

@@ -35,13 +35,11 @@ export default class Downloader {
 		for(const device in devices) {
 			const sensors = devices[device]
 			for(const sensor of sensors){
-				requests.push((async () => {
-					return [
-						device,
-						sensor,
-						await this.api.getSensorsData(sensor, start_date, end_date)
-					];
-				})());
+				requests.push((async () => [
+					device,
+					sensor,
+					await this.api.getSensorsData(sensor, start_date, end_date)
+				])());
 			}
 		}
 
@@ -97,13 +95,13 @@ export default class Downloader {
 	}
 
 	/** Scarica i file come csv */
-	async download({start_date, entries}:ContentData, name:string='data'){
+	async download({entries}:ContentData, name:string='data'){
 		const zip = new JSZip();
 
-		const date_folder = zip.folder(start_date)  as JSZip;
+		// const date_folder = zip.folder(start_date)  as JSZip;
 
 		for(const kit in entries){
-			const kit_folder = date_folder.folder(kit) as JSZip;
+			const kit_folder = zip.folder(kit) as JSZip;
 
 			for(const device in entries[kit]){
 				const device_folder = kit_folder.folder(device) as JSZip;
