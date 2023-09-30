@@ -1,5 +1,6 @@
 import JSZip from "jszip";
 import API from "./API"
+import PromiseBucket from "./PromiseBucket";
 
 interface SensorData {
 	kit_id: string,
@@ -29,52 +30,31 @@ export default class Downloader {
 	/** Restituisce i dati dei sensori relativi ai kit id selezionati */
 	async fetchData(kits:string[], devices:{[device:string]: string[]}, start_date:string, end_date:string) {
 
-		/** [device, sensor, Response][] */
-		const requests:Promise<[string,string,Response]>[] = [];
+		/** [device, sensor, Response] */
+		const bucket = new PromiseBucket<[string,string,Response]>();
 
 		for(const device in devices) {
 			const sensors = devices[device]
 			for(const sensor of sensors){
-				requests.push((async () => [
-					device,
-					sensor,
-					await this.api.getSensorsData(sensor, start_date, end_date)
-				])());
+				bucket.put(
+					this.api.getSensorsData(sensor, start_date, end_date)
+					.then(res => [device,sensor,res])
+				);
 			}
 		}
-
-		const responses = await Promise.all(requests);
-
-		const errors = responses.reduce((accumulator, [,,response]) => {
-			if(!response.ok) accumulator.push(response);
-			return accumulator;
-		}, [] as Response[]);
-
-		if(errors.length > 0){
-			// Nel caso ci fosse qualche errore
-			throw errors.map(response => Error(response.statusText));
-		}
-
-		const contents = await Promise.all(
-			responses.map(
-				async ([device, sensor, response]):Promise<[string,string,SensorData[]]> => {
-					return [
-						device,
-						sensor,
-						await response.json()
-					];
-				}
-			)
-		);
 
 		const data:ContentData = {
 			start_date: start_date,
 			end_date: end_date,
 			entries: {}
 		};
-		
+
 		console.debug('start_date: ' + start_date + '\nend_date: ' + end_date);
-		for(const [device, sensor, content] of contents){
+		for await (const [device,sensor,res] of bucket.iter()){
+			// Nel caso ci fosse qualche errore
+			if(!res.ok) throw Error(res.statusText);
+
+			const content = await res.json() as SensorData[];
 
 			console.debug(`${device}.${sensor}: ${content.length.toString()}`);
 
