@@ -7,12 +7,16 @@ interface SensorData {
 	[propName: string]: any
 }
 
-interface KitData {
-	[sensor_name:string]: SensorData[]
-}
-
 interface ContentData {
-	[kit_id:string]: KitData
+	start_date: string, 
+	end_date: string,
+	entries: {
+		[kit:string]: {
+			[device:string]: {
+				[sensor:string]: SensorData[]
+			}
+		}
+	}
 }
 
 export default class Downloader {
@@ -23,96 +27,91 @@ export default class Downloader {
 	}
 
 	/** Restituisce i dati dei sensori relativi ai kit id selezionati */
-	async fetchData(kits:string[], sensors:string[], start_date:string, end_date:string) {
+	async fetchData(kits:string[], devices:{[device:string]: string[]}, start_date:string, end_date:string) {
 
-		const data:ContentData = {}
+		/** [device, sensor, Response][] */
+		const requests:Promise<[string,string,Response]>[] = [];
 
-		const requests = sensors.map(
-			async (sensor_name):Promise<[string, Response]> => {
-				return [
-					sensor_name, 
-					await this.api.getSensorsData(sensor_name, start_date, end_date)
-				];
+		for(const device in devices) {
+			const sensors = devices[device]
+			for(const sensor of sensors){
+				requests.push((async () => {
+					return [
+						device,
+						sensor,
+						await this.api.getSensorsData(sensor, start_date, end_date)
+					];
+				})());
 			}
-		);
+		}
+
 		const responses = await Promise.all(requests);
-		const errors = responses.filter(([_, response]) => !response.ok);
+
+		const errors = responses.reduce((accumulator, [,,response]) => {
+			if(!response.ok) accumulator.push(response);
+			return accumulator;
+		}, [] as Response[]);
+
 		if(errors.length > 0){
 			// Nel caso ci fosse qualche errore
-			throw errors.map(([_, response]) => Error(response.statusText));
+			throw errors.map(response => Error(response.statusText));
 		}
+
 		const contents = await Promise.all(
 			responses.map(
-				async ([sensor_name, response]):Promise<[string, SensorData[]]> => {
+				async ([device, sensor, response]):Promise<[string,string,SensorData[]]> => {
 					return [
-						sensor_name,
+						device,
+						sensor,
 						await response.json()
 					];
 				}
 			)
 		);
+
+		const data:ContentData = {
+			start_date: start_date,
+			end_date: end_date,
+			entries: {}
+		};
 		
 		console.debug('start_date: ' + start_date + '\nend_date: ' + end_date);
+		for(const [device, sensor, content] of contents){
 
-		for(const [sensor_name, content] of contents) {
+			console.debug(`${device}.${sensor}: ${content.length.toString()}`);
 
-			console.debug(sensor_name + ': ' + content.length.toString());
-
-			for(const kit_id of kits){
-
-				let tmp = content.filter((elem => elem.kit_id == kit_id));
-				console.debug('- ' + sensor_name + '.' + kit_id +': ' + tmp.length.toString());
+			for(const kit of kits){
+				let tmp = content.filter((elem => elem.kit_id == kit));
+				console.debug(`- ${device}.${sensor}.${kit}: ${tmp.length.toString()}`);
 
 				if(tmp.length == 0) continue;
 
-				if(data[kit_id] === undefined) data[kit_id] = {};
+				if(data.entries[kit] === undefined) data.entries[kit] = {};
+				if(data.entries[kit][device] === undefined) data.entries[kit][device] = {};
 
-				data[kit_id][sensor_name] = tmp;
+				data.entries[kit][device][sensor] = tmp;
 			}
 		}
-
-			
-		
-		// for(const sensor_name of sensors){
-		// 	let res = await this.api.getSensorsData(sensor_name, start_date, end_date);
-	
-		// 	if(!res.ok) {
-		// 		if(res.status === 401){/* ERROR: Non deve accadere perchè l'autenticazione automatica all'interno delle api non ha funzionato*/}
-		// 		throw new Error(res.statusText);
-		// 	}
-	
-		// 	let content:SensorData[] = await res.json();
-
-		// 	console.debug(sensor_name + ': ' + content.length.toString());
-
-		// 	for(const kit_id of kits){
-		// 		// eslint-disable-next-line
-		// 		let tmp = content.filter((elem => elem.kit_id == kit_id));
-		// 		console.debug('- ' + sensor_name + '.' + kit_id +': ' + tmp.length.toString());
-		// 		if(tmp.length > 0){
-		// 			if(data[kit_id] === undefined){
-		// 				// se la proprietà kit_id non è stata ancora inizializzata
-		// 				data[kit_id] = {};
-		// 			}
-		// 			data[kit_id][sensor_name] = tmp;
-		// 		}
-		// 	}	
-		// }
-
 
 		return data;
 	}
 
 	/** Scarica i file come csv */
-	async download(data:ContentData, name:string='data'){
+	async download({start_date, entries}:ContentData, name:string='data'){
 		const zip = new JSZip();
 
-		for(const kit_id in data){
-			const kit_id_folder = zip.folder(kit_id) as JSZip;
+		const date_folder = zip.folder(start_date)  as JSZip;
 
-			for(const sensor_name in data[kit_id]){
-				kit_id_folder.file(sensor_name+'.csv', this._convertToCSV(data[kit_id][sensor_name]))
-			}
+		for(const kit in entries){
+			const kit_folder = date_folder.folder(kit) as JSZip;
+
+			for(const device in entries[kit]){
+				const device_folder = kit_folder.folder(device) as JSZip;
+
+				for(const sensor in entries[kit][device]){
+					device_folder.file(sensor+'.csv', this._convertToCSV(entries[kit][device][sensor]));
+				}
+			}	
 		}
 
 		const blob = await zip.generateAsync({type:"blob"});

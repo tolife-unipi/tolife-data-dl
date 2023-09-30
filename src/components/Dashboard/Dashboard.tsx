@@ -4,6 +4,14 @@ import Toast from '../../utils/Toast';
 import './Dashboard.scss';
 import Downloader from "../../utils/Downloader";
 
+/** Descrizione di tutti i sensori */
+const DEVICES = {
+	PHONE: ['ACC_PHONE', 'BAT_PHONE', 'GPS_PHONE', 'GYR_PHONE', 'MIC_PHONE', 'STEP_PHONE'],
+	WATCH: ['ACC_WATCH', 'BAT_WATCH', 'GPS_WATCH', 'GYR_WATCH', 'MIC_WATCH', 'STEP_WATCH', 'LIGHT_WATCH', 'PPG_WATCH', 'HEART_RATE_WATCH'],
+	SHOE_LEFT: ['ACC_SHOE_LEFT', 'BAT_SHOE_LEFT', 'GYR_SHOE_LEFT', 'PRESS_SHOE_LEFT'],
+	SHOE_RIGHT: ['ACC_SHOE_RIGHT', 'BAT_SHOE_RIGHT', 'GYR_SHOE_RIGHT', 'PRESS_SHOE_RIGHT']
+}
+
 interface DashboardProps {
 	/** Classe per il download dei dati */
 	downloader: Downloader
@@ -11,9 +19,9 @@ interface DashboardProps {
 
 interface DashboardState {
 	/** elenco di kit id selezionati */
-	kit_ids: string[],
+	kits: string[],
 	/** elenco di sensori selezionati */
-	sensors_name: string[],
+	devices: {[device: string]:string[]},
 	/** data di inizio della ricerca */
 	start_date: string,
 	/** data di fine della ricerca */
@@ -22,12 +30,11 @@ interface DashboardState {
 	loading: boolean
 }
 
-
 export default class Dashboard extends Component<DashboardProps,DashboardState> {
 
 	state:DashboardState = {
-		kit_ids: [],
-		sensors_name: [],
+		kits: [],
+		devices: Object.fromEntries(Object.keys(DEVICES).map(device => [device, []])),
 		start_date: '',
 		end_date: '',
 		loading: false,
@@ -39,12 +46,12 @@ export default class Dashboard extends Component<DashboardProps,DashboardState> 
 
 		this.setState({loading: true});
 
-		const {kit_ids, sensors_name, start_date, end_date} = this.state;
+		const {kits, devices, start_date, end_date} = this.state;
 		const {downloader} = this.props;
 
-		let data = {}
+		let data:any = {};
 		try {
-			data = await downloader.fetchData(kit_ids, sensors_name, start_date, end_date);
+			data = await downloader.fetchData(kits, devices, start_date, end_date);
 		} catch (error) {
 			Toast((error as Error).message);
 			console.error(error);
@@ -62,29 +69,28 @@ export default class Dashboard extends Component<DashboardProps,DashboardState> 
 	}
 
 	/** Gestisce l'input dei kit Id */
-	kitIdsInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => this.setState({kit_ids: event.target.value.split(',').map(elem => elem.trim())});
+	kitIdsInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => this.setState({kits: event.target.value.split(',').map(elem => elem.trim())});
 
-	/**
-	 * Gestisce l'input della data di inizio
-	 * @param {Event} event 
-	 */
+	/** Gestisce l'input della data di inizio */
 	startDateInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => this.setState({start_date: event.target.value});
 
-	/**
-	 * Gestisce l'input della data di fine
-	 * @param {Event} event 
-	 */
+	/** Gestisce l'input della data di fine */
 	endDateInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => this.setState({end_date: event.target.value});
 
-	/**
-	 * Gestisce l'input dei sensori
-	 * @param {Event} event 
-	 */
+	/** Gestisce l'input dei sensori */
 	sensorsInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-		if(event.target.checked)
-			this.setState({sensors_name: this.state.sensors_name.concat([event.target.value])});
+		const checked = event.target.checked;
+		const sensor = event.target.value;
+		const device = event.target.name;
+
+		let tmp = {...this.state.devices}
+
+		if(checked)
+			tmp[device] = tmp[device].concat([sensor]);
 		else
-			this.setState({sensors_name: this.state.sensors_name.filter(elem => elem !== event.target.value)});
+			tmp[device] = tmp[device].filter(elem => elem !== sensor);
+
+		this.setState({devices: tmp});
 	}
 
 	render(){
@@ -130,71 +136,17 @@ export default class Dashboard extends Component<DashboardProps,DashboardState> 
 					</span>
 
 					<fieldset>
-						<legend>Sensor Name</legend>
+						<legend>Device</legend>
 
-						<fieldset>
-							<legend>Phone</legend>
-							{['ACC_PHONE', 'BAT_PHONE', 'GPS_PHONE', 'GYR_PHONE', 'MIC_PHONE', 'STEP_PHONE'].map(sensor_name => (
-								<span key={sensor_name}>
-									<input
-										type="checkbox"
-										name={sensor_name}
-										id={sensor_name}
-										value={sensor_name}
-										onChange={this.sensorsInputHandler}
-									/>
-									<label htmlFor={sensor_name}>{sensor_name}</label>
-								</span>
-							))}
-						</fieldset>
+						{Object.entries(DEVICES).map(([key, value]) => (
+							<DeviceInput 
+								key={key}
+								device_name={key}
+								sensors={value}
+								onChange={this.sensorsInputHandler}
+							/>
+						))}
 
-						<fieldset>
-							<legend>Watch</legend>
-							{['ACC_WATCH', 'BAT_WATCH', 'GPS_WATCH', 'GYR_WATCH', 'MIC_WATCH', 'STEP_WATCH', 'LIGHT_WATCH', 'PPG_WATCH', 'HEART_RATE_WATCH'].map(sensor_name => (
-								<span key={sensor_name}>
-									<input
-										type="checkbox"
-										name={sensor_name}
-										id={sensor_name}
-										value={sensor_name}
-										onChange={this.sensorsInputHandler}
-									/>
-									<label htmlFor={sensor_name}>{sensor_name}</label>
-								</span>
-							))}
-						</fieldset>
-
-						<fieldset>
-							<legend>Left Shoe</legend>
-							{['ACC_SHOE_LEFT', 'BAT_SHOE_LEFT', 'GYR_SHOE_LEFT', 'PRESS_SHOE_LEFT'].map(sensor_name => (
-								<span key={sensor_name}>
-									<input
-										type="checkbox"
-										name={sensor_name}
-										id={sensor_name}
-										value={sensor_name}
-										onChange={this.sensorsInputHandler}
-									/>
-									<label htmlFor={sensor_name}>{sensor_name}</label>
-								</span>
-							))}
-						</fieldset>
-
-						<fieldset>
-							<legend>Right Shoe</legend>
-							{['ACC_SHOE_RIGHT', 'BAT_SHOE_RIGHT', 'GYR_SHOE_RIGHT', 'PRESS_SHOE_RIGHT'].map(sensor_name => (
-								<span key={sensor_name}>
-									<input
-										type="checkbox"
-										name={sensor_name}
-										id={sensor_name}
-										value={sensor_name}
-										onChange={this.sensorsInputHandler}
-									/>
-									<label htmlFor={sensor_name}>{sensor_name}</label>
-								</span>
-							))}
-						</fieldset>
 					</fieldset>
 
 					<button type='submit'>DOWNLOAD</button>
@@ -202,4 +154,33 @@ export default class Dashboard extends Component<DashboardProps,DashboardState> 
 			</Card>
 		);
 	}
+}
+
+interface DeviceInputProps {
+	/** Nome del dispositivo */
+	device_name: string,
+	/** Lista dei sensori */
+	sensors: string[],
+	/** Funzione da chiamare quando viene selezionato un sensore */
+	onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+function DeviceInput({device_name, sensors, onChange}: DeviceInputProps) {
+	return (
+		<fieldset>
+			<legend>{device_name}</legend>
+			{sensors.map(sensor_name => (
+				<span key={sensor_name}>
+					<input
+						type="checkbox"
+						name={device_name}
+						id={sensor_name}
+						value={sensor_name}
+						onChange={onChange}
+					/>
+					<label htmlFor={sensor_name}>{sensor_name}</label>
+				</span>
+			))}
+		</fieldset>
+	);
 }
