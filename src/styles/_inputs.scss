@@ -88,6 +88,11 @@ fieldset {
 	> legend {
 		padding: 0 10px;
 	}
+
+	> hr {
+		width: 100%;
+		border: 1px solid darken($text-color, 30%);
+	}
 }
 
 button {

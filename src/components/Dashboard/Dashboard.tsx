@@ -77,19 +77,10 @@ export default class Dashboard extends Component<DashboardProps,DashboardState> 
 	/** Gestisce l'input della data di fine */
 	endDateInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => this.setState({end_date: event.target.value});
 
-	/** Gestisce l'input dei sensori */
-	sensorsInputHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const checked = event.target.checked;
-		const sensor = event.target.value;
-		const device = event.target.name;
-
+	/** Sovrascrive la lista dei sensori selezionati */
+	sensorInputOverride = (device:string, sensors:string[]) => {
 		let tmp = {...this.state.devices}
-
-		if(checked)
-			tmp[device] = tmp[device].concat([sensor]);
-		else
-			tmp[device] = tmp[device].filter(elem => elem !== sensor);
-
+		tmp[device] = [...sensors];
 		this.setState({devices: tmp});
 	}
 
@@ -143,7 +134,7 @@ export default class Dashboard extends Component<DashboardProps,DashboardState> 
 								key={key}
 								device_name={key}
 								sensors={value}
-								onChange={this.sensorsInputHandler}
+								onUpdate={(sensors:string[]) => this.sensorInputOverride(key, sensors)}
 							/>
 						))}
 
@@ -162,25 +153,71 @@ interface DeviceInputProps {
 	/** Lista dei sensori */
 	sensors: string[],
 	/** Funzione da chiamare quando viene selezionato un sensore */
-	onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+	onUpdate: (sensors:string[]) => void;
 }
 
-function DeviceInput({device_name, sensors, onChange}: DeviceInputProps) {
-	return (
-		<fieldset>
-			<legend>{device_name}</legend>
-			{sensors.map(sensor_name => (
-				<span key={sensor_name}>
+interface DeviceInputState {
+	[sensor:string]: boolean
+}
+
+class DeviceInput extends Component<DeviceInputProps,DeviceInputState> {
+	state:DeviceInputState
+	constructor(props:DeviceInputProps){
+		super(props);
+		this.state = Object.fromEntries(props.sensors.map(sensor => [sensor, false]));
+	}
+
+	/** Handler per la selezione di un sensore */
+	onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const checked = event.target.checked;
+		const sensor = event.target.value;
+
+		this.setState({[sensor]: checked}, ()=>{
+			const sensors:string[] = Object.entries(this.state).filter(([, checked])=>checked).map(([sensor,]) => sensor);
+			this.props.onUpdate(sensors);
+		});	
+	}
+
+	/** Handler per attivare o disattivare tutti i sensori */
+	onSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const checked = event.target.checked;
+		this.setState(Object.fromEntries(this.props.sensors.map(sensor => [sensor, checked])), ()=>{
+			const sensors:string[] = checked ? Object.keys(this.state) : [];
+			this.props.onUpdate(sensors);
+		})
+	}
+
+	render(){
+		const {device_name, sensors} = this.props;
+		return (
+			<fieldset>
+				<legend>{device_name}</legend>
+				{sensors.map(sensor_name => (
+					<span key={sensor_name}>
+						<input
+							type="checkbox"
+							name={device_name}
+							id={sensor_name}
+							value={sensor_name}
+							onChange={this.onChange}
+							checked={this.state[sensor_name]}
+						/>
+						<label htmlFor={sensor_name}>{sensor_name}</label>
+					</span>
+				))}
+				<hr/>
+				<span>
 					<input
 						type="checkbox"
 						name={device_name}
-						id={sensor_name}
-						value={sensor_name}
-						onChange={onChange}
+						id={`${device_name}_ALL`}
+						value={`${device_name}_ALL`}
+						onChange={this.onSelectAll}
+						checked={Object.entries(this.state).every(([,checked])=>checked)}
 					/>
-					<label htmlFor={sensor_name}>{sensor_name}</label>
+					<label htmlFor={`${device_name}_ALL`}>ALL</label>
 				</span>
-			))}
-		</fieldset>
-	);
+			</fieldset>
+		);
+	}
 }

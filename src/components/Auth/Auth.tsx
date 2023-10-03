@@ -107,8 +107,14 @@ export default class Auth extends Component<AuthProps,AuthState>{
 							readOnly={is_logged}
 							required={true}
 							pattern="^(http|https)://[^\s]+"
+							autoComplete='url'
+							list='backend-list'
 						/>
 						<label htmlFor='backend'>Backend</label>
+						<datalist id="backend-list">
+							<option value="http://131.114.51.61:3100/"></option>
+							<option value="https://api-rawdatastore.techedgegroup.es/"></option>
+						</datalist>
 					</span>
 
 					<span>
@@ -121,6 +127,7 @@ export default class Auth extends Component<AuthProps,AuthState>{
 							onChange={e => this.setState({username: e.target.value})}
 							readOnly={is_logged}
 							required={true}
+							autoComplete='username'
 						/>
 						<label htmlFor='username'>Username</label>
 					</span>
@@ -135,6 +142,7 @@ export default class Auth extends Component<AuthProps,AuthState>{
 							onChange={e => this.setState({password: e.target.value})}
 							readOnly={is_logged}
 							required={true}
+							autoComplete='current-password'
 						/>
 						<label htmlFor='password'>Password</label>
 					</span>
