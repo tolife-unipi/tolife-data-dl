@@ -27,7 +27,7 @@ interface AuthState {
 export default class Auth extends Component<AuthProps,AuthState>{
 	
 	state:AuthState = {
-		backend: localStorage.getItem('backend') ?? 'https://api-rawdatastore.techedgegroup.es',
+		backend: localStorage.getItem('backend') ?? 'http://131.114.51.61:3100/',
 		username: localStorage.getItem('username') ?? '',
 		password: localStorage.getItem('password') ?? '',
 		is_logged: false,
