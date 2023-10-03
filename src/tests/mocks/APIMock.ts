@@ -93,6 +93,17 @@ export default class APIMock extends API {
 				kitId: this.kits_id[i % this.kits_id.length],
 				timestamp: new Date(new Date(start_date).getTime() + Math.random() * (new Date(end_date).getTime() - new Date(start_date).getTime())).toISOString().slice(0,-5)
 			})))));
+		else if(sensor_name === 'MAT_ACC_1' || sensor_name === 'MAT_ACC_2' || sensor_name === 'MAT_ACC_3')
+			return new Promise(res => res(Response.json(Array(this.lenght_results).fill(0).map((_, i) => ({
+				_id: Array(12).fill(0).map(_ => Math.floor(Math.random() * 256).toString(16).padStart(2, '0')).join(''),
+				x: Math.random()*10,
+				y: Math.random()*10,
+				z: Math.random()*10,
+				kitId: this.kits_id[i % this.kits_id.length],
+				packetId: 156874654,
+				temperature: 100,
+				timestamp: new Date(new Date(start_date).getTime() + Math.random() * (new Date(end_date).getTime() - new Date(start_date).getTime())).toISOString().slice(0,-5)
+			})))));
 		else
 			return new Promise(res => res(Response.json([])));
 	}
