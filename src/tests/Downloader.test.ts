@@ -4,8 +4,8 @@ import APIMocks from "./mocks/APIMock"
 describe('Downloader Unit Test', () => {
 	const KITS = ['D_0', 'D_1', 'D_2'];
 	const DEVICES = {
-		PHONE: ['ACC_PHONE', 'BAT_PHONE', 'GPS_PHONE', 'GYR_PHONE', 'MIC_PHONE', 'STEP_PHONE'],
-		WATCH: ['ACC_WATCH', 'BAT_WATCH', 'GPS_WATCH', 'GYR_WATCH', 'MIC_WATCH', 'STEP_WATCH', 'LIGHT_WATCH', 'PPG_WATCH', 'HEART_RATE_WATCH'],
+		PHONE: ['ACC_PHONE', 'BAT_PHONE', 'GPS_PHONE', 'GYR_PHONE', 'MIC_PHONE', 'STEP_PHONE', 'ORI_PHONE', 'LOG_PHONE'],
+		WATCH: ['ACC_WATCH', 'BAT_WATCH', 'GPS_WATCH', 'GYR_WATCH', 'MIC_WATCH', 'STEP_WATCH', 'LIGHT_WATCH', 'PPG_WATCH', 'HEART_RATE_WATCH', 'LOG_WATCH'],
 		SHOE_LEFT: ['ACC_SHOE_LEFT', 'BAT_SHOE_LEFT', 'GYR_SHOE_LEFT', 'PRESS_SHOE_LEFT'],
 		SHOE_RIGHT: ['ACC_SHOE_RIGHT', 'BAT_SHOE_RIGHT', 'GYR_SHOE_RIGHT', 'PRESS_SHOE_RIGHT']
 	}
@@ -45,7 +45,7 @@ describe('Downloader Unit Test', () => {
 						expect(sensor_entry).toBeDefined();
 						expect(sensor_entry.length).toBeGreaterThan(0);
 						for(const entry of sensor_entry){
-							expect(entry).toHaveProperty('kit_id');
+							expect(entry).toHaveProperty('kitId');
 						}
 					}
 				}

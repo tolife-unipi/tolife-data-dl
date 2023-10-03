@@ -59,7 +59,7 @@ export default class Downloader {
 			console.debug(`${device}.${sensor}: ${content.length.toString()}`);
 
 			for(const kit of kits){
-				let tmp = content.filter((elem => elem.kit_id == kit));
+				let tmp = content.filter((elem => elem.kitId == kit));
 				console.debug(`- ${device}.${sensor}.${kit}: ${tmp.length.toString()}`);
 
 				if(tmp.length == 0) continue;

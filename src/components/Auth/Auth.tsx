@@ -41,7 +41,7 @@ export default class Auth extends Component<AuthProps,AuthState>{
 		const {backend, username, password} = this.state;
 
 		const api = new API(new URL(backend), username, password);
-		// const api = new APIMock(['D_0', 'D_1'], 500000);
+		// const api = new APIMock(['D_0', 'D_1'], 500);
 		let res:Response;
 		try {
 			res = await api.authorize();

@@ -32,7 +32,7 @@ export default class APIMock extends API {
 				x: Math.random()*10,
 				y: Math.random()*10,
 				z: Math.random()*10,
-				kit_id: this.kits_id[i % this.kits_id.length],
+				kitId: this.kits_id[i % this.kits_id.length],
 				timestamp: new Date(new Date(start_date).getTime() + Math.random() * (new Date(end_date).getTime() - new Date(start_date).getTime())).toISOString().slice(0,-5)
 			})))));
 		else if(sensor_name === 'ACC_SHOE_LEFT' || sensor_name === 'ACC_SHOE_RIGHT' || sensor_name === 'GYR_SHOE_LEFT' || sensor_name === 'GYR_SHOE_RIGHT')
@@ -43,28 +43,28 @@ export default class APIMock extends API {
 				x: Math.random()*10,
 				y: Math.random()*10,
 				z: Math.random()*10,
-				kit_id: this.kits_id[i % this.kits_id.length],
+				kitId: this.kits_id[i % this.kits_id.length],
 				timestamp: new Date(new Date(start_date).getTime() + Math.random() * (new Date(end_date).getTime() - new Date(start_date).getTime())).toISOString().slice(0,-5)
 			})))));
 		else if(sensor_name === 'BAT_PHONE' || sensor_name === 'BAT_WATCH')
 			return new Promise(res => res(Response.json(Array(this.lenght_results).fill(0).map((_, i) => ({
 				_id: Array(12).fill(0).map(_ => Math.floor(Math.random() * 256).toString(16).padStart(2, '0')).join(''),
 				level: Math.floor(Math.random()*400 - 200),
-				kit_id: this.kits_id[i % this.kits_id.length],
+				kitId: this.kits_id[i % this.kits_id.length],
 				timestamp: new Date(new Date(start_date).getTime() + Math.random() * (new Date(end_date).getTime() - new Date(start_date).getTime())).toISOString().slice(0,-5)
 			})))));
 		else if(sensor_name === 'HEART_RATE_WATCH')
 			return new Promise(res => res(Response.json(Array(this.lenght_results).fill(0).map((_, i) => ({
 				_id: Array(12).fill(0).map(_ => Math.floor(Math.random() * 256).toString(16).padStart(2, '0')).join(''),
 				heartRate: Math.floor(Math.random()*120),
-				kit_id: this.kits_id[i % this.kits_id.length],
+				kitId: this.kits_id[i % this.kits_id.length],
 				timestamp: new Date(new Date(start_date).getTime() + Math.random() * (new Date(end_date).getTime() - new Date(start_date).getTime())).toISOString().slice(0,-5)
 			})))));
 		else if(sensor_name === 'LIGHT_WATCH' || sensor_name === 'MIC_PHONE' || sensor_name === 'MIC_WATCH')
 			return new Promise(res => res(Response.json(Array(this.lenght_results).fill(0).map((_, i) => ({
 				_id: Array(12).fill(0).map(_ => Math.floor(Math.random() * 256).toString(16).padStart(2, '0')).join(''),
 				intensity: Math.floor(Math.random()*256),
-				kit_id: this.kits_id[i % this.kits_id.length],
+				kitId: this.kits_id[i % this.kits_id.length],
 				timestamp: new Date(new Date(start_date).getTime() + Math.random() * (new Date(end_date).getTime() - new Date(start_date).getTime())).toISOString().slice(0,-5)
 			})))));
 		else if(sensor_name === 'PPG_WATCH')
@@ -72,7 +72,7 @@ export default class APIMock extends API {
 				_id: Array(12).fill(0).map(_ => Math.floor(Math.random() * 256).toString(16).padStart(2, '0')).join(''),
 				PPG5: Math.random() * 3e-39,
 				PPG7: Math.random() * 3e-39,
-				kit_id: this.kits_id[i % this.kits_id.length],
+				kitId: this.kits_id[i % this.kits_id.length],
 				timestamp: new Date(new Date(start_date).getTime() + Math.random() * (new Date(end_date).getTime() - new Date(start_date).getTime())).toISOString().slice(0,-5)
 			})))));
 		else if(sensor_name === 'PRESS_SHOE_LEFT' || sensor_name === 'PRESS_SHOE_RIGHT')
@@ -83,14 +83,14 @@ export default class APIMock extends API {
 				press2: Math.floor(Math.random() * 1500),
 				press3: Math.floor(Math.random() * 1500),
 				timeBoard: Math.floor(Math.random() * 256),
-				kit_id: this.kits_id[i % this.kits_id.length],
+				kitId: this.kits_id[i % this.kits_id.length],
 				timestamp: new Date(new Date(start_date).getTime() + Math.random() * (new Date(end_date).getTime() - new Date(start_date).getTime())).toISOString().slice(0,-5)
 			})))));
 		else if(sensor_name === 'STEP_PHONE' || sensor_name === 'STEP_WATCH')
 			return new Promise(res => res(Response.json(Array(this.lenght_results).fill(0).map((_, i) => ({
 				_id: Array(12).fill(0).map(_ => Math.floor(Math.random() * 256).toString(16).padStart(2, '0')).join(''),
 				numStep: Math.floor(Math.random() * 256),
-				kit_id: this.kits_id[i % this.kits_id.length],
+				kitId: this.kits_id[i % this.kits_id.length],
 				timestamp: new Date(new Date(start_date).getTime() + Math.random() * (new Date(end_date).getTime() - new Date(start_date).getTime())).toISOString().slice(0,-5)
 			})))));
 		else
