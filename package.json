@@ -2,7 +2,7 @@
   "name": "tolife",
   "description": "Downloader tool for TOLIFE",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": ".",
   "author": "Lorenzo Chesi",
   "type": "module",
