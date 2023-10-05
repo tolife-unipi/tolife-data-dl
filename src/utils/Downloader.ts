@@ -36,6 +36,12 @@ export default class Downloader {
 		for(const device in devices) {
 			const sensors = devices[device]
 			for(const sensor of sensors){
+
+				//////////////////////////////////////////////
+				//TODO: Da rimuovere in fase di produzione, si spera
+				await new Promise(r => setTimeout(r, 75));
+				//////////////////////////////////////////////
+
 				bucket.put(
 					this.api.getSensorsData(sensor, start_date, end_date)
 					.then(res => [device,sensor,res])
@@ -52,7 +58,7 @@ export default class Downloader {
 		console.debug('start_date: ' + start_date + '\nend_date: ' + end_date);
 		for await (const [device,sensor,res] of bucket.iter()){
 			// Nel caso ci fosse qualche errore
-			if(!res.ok) throw Error(res.statusText);
+			if(!res.ok) throw Error(await res.text());
 
 			const content = await res.json() as SensorData[];
 

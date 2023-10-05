@@ -53,8 +53,7 @@ export default class Auth extends Component<AuthProps,AuthState>{
 		}
 
 		if(!res.ok){
-			const content = await res.json();
-			Toast(content.error_description);
+			Toast(await res.text());
 			this.setState({loading: false});
 			return;
 		}
