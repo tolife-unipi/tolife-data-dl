@@ -27,7 +27,7 @@ interface AuthState {
 export default class Auth extends Component<AuthProps,AuthState>{
 	
 	state:AuthState = {
-		backend: localStorage.getItem('backend') ?? 'http://131.114.51.61:3100/',
+		backend: localStorage.getItem('backend') ?? 'http://131.114.51.61:3100/', // Valore di default: http://131.114.51.61:3100/
 		username: localStorage.getItem('username') ?? '',
 		password: localStorage.getItem('password') ?? '',
 		is_logged: false,
@@ -36,24 +36,27 @@ export default class Auth extends Component<AuthProps,AuthState>{
 
 	/** Si collega al backend. */
 	login = async () => {
+		// Abilita la barra di caricamento
 		this.setState({loading: true});
 
 		const {backend, username, password} = this.state;
 
+		// Crea un istanza della clase API da usare nella Dashboard
 		const api = new API(new URL(backend), username, password);
 		// const api = new APIMock(['D_0', 'D_1'], 500);
+
+
 		let res:Response;
 		try {
 			res = await api.authorize();
+			// se la risposta ha un valore di ritorno != 200
+			if(!res.ok) throw new Error(await res.text())
 		} catch(error){
+			// Nel caso di errore notifica l'utente
 			Toast((error as Error).message);
+			// Lo scrive nella console
 			console.error(error);
-			this.setState({loading: false});
-			return;
-		}
-
-		if(!res.ok){
-			Toast(await res.text());
+			// Rimuove la barra di caricamento
 			this.setState({loading: false});
 			return;
 		}

@@ -17,6 +17,7 @@ export default class App extends Component<{},AppState>{
 
 	render(){
 		
+		/** Numero di versione uguale a quello scritto in package.json */
 		const version = process.env.NODE_ENV === 'development' ? 'DEV' : process.env.APP_VERSION as string;
 
 		return (

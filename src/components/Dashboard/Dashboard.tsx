@@ -44,8 +44,10 @@ export default class Dashboard extends Component<DashboardProps,DashboardState> 
 
 	/** Gestisce l'invio e la ricezione dei dati */
 	formSubmitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
+		// Evito che il from completi la sua azione predefinita
 		event.preventDefault();
 
+		// Abilita la barra di caricamento
 		this.setState({loading: true});
 
 		const {kits, devices, start_date, end_date} = this.state;
@@ -53,20 +55,28 @@ export default class Dashboard extends Component<DashboardProps,DashboardState> 
 
 		let data:any = {};
 		try {
+			// Ottiene i dati deiu sensori
 			data = await downloader.fetchData(kits, devices, start_date, end_date);
 		} catch (error) {
+			// Nel caso di errore notifica l'utente
 			Toast((error as Error).message);
+			// Lo scrive nella console
 			console.error(error);
+			// Rimuove la barra di caricamento
 			this.setState({loading: false});
 			return;
 		}
 
+		// Se on ho travato nessun valore
 		if(Object.keys(data).length === 0){
+			// Notifico l'utente
 			Toast('Empty');
 		} else {
+			// Scarico i dati trovati
 			await downloader.download(data, start_date);
 		}
 
+		// Rimuove la barra di caricamento
 		this.setState({loading: false});
 	}
 
