@@ -17,7 +17,7 @@ describe('Downloader Unit Test', () => {
 
 	test('fetchData', async () => {
 
-		const data = await downloader.fetchData(KITS, DEVICES, '2022-01-01', '2023-01-01');
+		const data = await downloader.fetchData(KITS, DEVICES, new Date('2022-01-01'), new Date('2023-01-01'));
 
 		expect(data.start_date).toBeDefined();
 		expect(data.end_date).toBeDefined();
@@ -53,5 +53,5 @@ describe('Downloader Unit Test', () => {
 				}
 			}
 		}	
-	});	
+	}, 500000);	
 });
