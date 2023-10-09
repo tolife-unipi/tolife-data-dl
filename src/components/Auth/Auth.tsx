@@ -3,7 +3,7 @@ import { Component } from 'react';
 import Card from '../Card/Card';
 import API from '../../utils/API';
 // import APIMock from '../../tests/mocks/APIMock';
-import Toast from '../../utils/Toast';
+import { toast } from 'react-toastify';
 import './Auth.scss';
 
 interface AuthProps {
@@ -38,6 +38,7 @@ export default class Auth extends Component<AuthProps,AuthState>{
 	login = async () => {
 		// Abilita la barra di caricamento
 		this.setState({loading: true});
+		const toast_id = toast.loading("Please wait...");
 
 		const {backend, username, password} = this.state;
 
@@ -53,7 +54,7 @@ export default class Auth extends Component<AuthProps,AuthState>{
 			if(!res.ok) throw new Error(await res.text())
 		} catch(error){
 			// Nel caso di errore notifica l'utente
-			Toast((error as Error).message);
+			toast.update(toast_id, { render: (error as Error).message, type: "error", isLoading: false, autoClose: 5000 });
 			// Lo scrive nella console
 			console.error(error);
 			// Rimuove la barra di caricamento
@@ -70,7 +71,7 @@ export default class Auth extends Component<AuthProps,AuthState>{
 		this.props.onConnect(api);
 
 		// Notifico l'utente
-		Toast('Success')
+		toast.update(toast_id, { render: 'Success', type: "success", isLoading: false, autoClose: 5000 });
 
 		// Confermo la corretta autenticazione
 		this.setState({is_logged: true, loading: false});

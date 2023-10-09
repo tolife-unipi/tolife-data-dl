@@ -1,6 +1,7 @@
 @use "sass:color";
 @use './styles/global' as *;
 
+
 html {
 	color-scheme: dark;
 }
@@ -19,36 +20,9 @@ body {
 	justify-content: space-between;
 }
 
-/**** TOAST ****/
 
-div.Toast {
-	visibility: hidden;
-	opacity: 0;
-	min-width: 150px;
-	max-width: 350px;
+.Toastify__toast {
+	border: 1px solid $base-color;
 	background-color: color.adjust($background-color, $whiteness: 8%);
 	box-shadow: 0 0 10px darken($background-color, 3%);
-	;
-	border: 1px solid $base-color;
-	border-radius: 4px;
-	color: $text-color;
-	text-align: center;
-	padding: 16px;
-	position: fixed;
-	z-index: 1;
-	right: 0;
-	margin: 0 5%;
-	top: -53px;
-	transition: all 0.5s;
-
-	@media only screen and (max-width: 600px) {
-		max-width: none;
-		width: calc(90% - 34px);
-	}
-
-	&.active {
-		opacity: 100;
-		top: 25px;
-		visibility: visible;
-	}
 }

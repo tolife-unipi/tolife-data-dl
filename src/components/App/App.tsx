@@ -5,6 +5,8 @@ import Dashboard from '../Dashboard/Dashboard';
 import Downloader from '../../utils/Downloader';
 import API from '../../utils/API';
 import logo from './logo.png';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface AppState {
 	/** REST API */
@@ -22,6 +24,13 @@ export default class App extends Component<{},AppState>{
 
 		return (
 			<>
+				<ToastContainer
+					position="top-right"
+					newestOnTop={true}
+					closeOnClick={true}
+					hideProgressBar={true}
+					theme="dark"
+				/>
 				<header>
 					<h1>TOLIFE</h1>
 					<img width="65" height="65" alt="TOLIFE" src={logo} style={{float: 'right'}}/>
@@ -34,6 +43,7 @@ export default class App extends Component<{},AppState>{
 					}
 				</main>
 				<footer>Ver. {version}</footer>
+				
 			</>
 		);
 	}

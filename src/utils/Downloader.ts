@@ -1,6 +1,7 @@
 import JSZip from "jszip";
 import API from "./API"
 import PromiseBucket from "./PromiseBucket";
+import { toast } from 'react-toastify';
 
 interface SensorData {
 	kit_id: string,
@@ -28,37 +29,43 @@ export default class Downloader {
 	}
 
 	/** Restituisce i dati dei sensori relativi ai kit id selezionati */
-	async fetchData(kits:string[], devices:{[device:string]: string[]}, start_date:string, end_date:string) {
+	async fetchData(kits:string[], devices:{[device:string]: string[]}, start_date:Date, end_date:Date) {
 
 		/** [device, sensor, Response] */
-		const bucket = new PromiseBucket<[string,string,Response]>();
+		const bucket = new PromiseBucket<[string,string,Response]>(1);
 
 		for(const device in devices) {
 			const sensors = devices[device]
 			for(const sensor of sensors){
 
-				//////////////////////////////////////////////
-				//TODO: Da rimuovere in fase di produzione, si spera
-				await new Promise(r => setTimeout(r, 75));
-				//////////////////////////////////////////////
+				// DA RIMUOVERE QUANDO IL SERVER SARÀ DECENTE
+				await new Promise(r => setTimeout(r, 10000));
+				this.api.authorize();
+				/////////////////////////////////////////////
 
-				bucket.put(
-					this.api.getSensorsData(sensor, start_date, end_date)
-					.then(res => [device,sensor,res])
+				await bucket.put(
+					this.api.getSensorsData(sensor, start_date.toJSON(), end_date.toJSON())
+					.then(
+						res => [device,sensor,res], 
+						err => [device,sensor,new Response((err as Error).message, {status:500})]
+					)
 				);
 			}
 		}
 
 		const data:ContentData = {
-			start_date: start_date,
-			end_date: end_date,
+			start_date: start_date.toJSON(),
+			end_date: end_date.toJSON(),
 			entries: {}
 		};
 
 		console.debug('start_date: ' + start_date + '\nend_date: ' + end_date);
 		for await (const [device,sensor,res] of bucket.iter()){
 			// Nel caso ci fosse qualche errore
-			if(!res.ok) throw Error(await res.text());
+			if(!res.ok){
+				toast.error(`${device}.${sensor}: ${await res.text()}`, {autoClose: 5000});
+				continue;
+			}
 
 			const content = await res.json() as SensorData[];
 

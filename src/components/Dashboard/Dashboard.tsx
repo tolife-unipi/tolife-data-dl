@@ -1,6 +1,6 @@
 import { Component } from "react";
 import Card from "../Card/Card";
-import Toast from '../../utils/Toast';
+import { toast } from 'react-toastify';
 import './Dashboard.scss';
 import Downloader from "../../utils/Downloader";
 
@@ -49,17 +49,18 @@ export default class Dashboard extends Component<DashboardProps,DashboardState> 
 
 		// Abilita la barra di caricamento
 		this.setState({loading: true});
+		const toast_id = toast.loading("Please wait...");
 
 		const {kits, devices, start_date, end_date} = this.state;
 		const {downloader} = this.props;
 
 		let data:any = {};
 		try {
-			// Ottiene i dati deiu sensori
-			data = await downloader.fetchData(kits, devices, start_date, end_date);
+			// Ottiene i dati dei sensori
+			data = await downloader.fetchData(kits, devices, new Date(start_date), new Date(end_date));
 		} catch (error) {
 			// Nel caso di errore notifica l'utente
-			Toast((error as Error).message);
+			toast.update(toast_id, { render: (error as Error).message, type: "error", isLoading: false, autoClose: 5000 });
 			// Lo scrive nella console
 			console.error(error);
 			// Rimuove la barra di caricamento
@@ -70,9 +71,10 @@ export default class Dashboard extends Component<DashboardProps,DashboardState> 
 		// Se on ho travato nessun valore
 		if(Object.keys(data).length === 0){
 			// Notifico l'utente
-			Toast('Empty');
+			toast.update(toast_id, { render: 'Empty', type: "info", isLoading: false, autoClose: 5000 });
 		} else {
 			// Scarico i dati trovati
+			toast.update(toast_id, { render: 'Downloaded', type: "success", isLoading: false, autoClose: 5000 });
 			await downloader.download(data, start_date);
 		}
 
