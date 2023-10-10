@@ -68,8 +68,8 @@ export default class Dashboard extends Component<DashboardProps,DashboardState> 
 			return;
 		}
 
-		// Se on ho travato nessun valore
-		if(Object.keys(data).length === 0){
+		// Se non ho travato nessun valore
+		if(Object.keys(data.entries).length === 0){
 			// Notifico l'utente
 			toast.update(toast_id, { render: 'Empty', type: "info", isLoading: false, autoClose: 5000 });
 		} else {
