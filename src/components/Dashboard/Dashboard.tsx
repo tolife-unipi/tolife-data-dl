@@ -71,7 +71,7 @@ export default class Dashboard extends Component<DashboardProps,DashboardState> 
 		// Se non ho travato nessun valore
 		if(Object.keys(data.entries).length === 0){
 			// Notifico l'utente
-			toast.update(toast_id, { render: 'Empty', type: "info", isLoading: false, autoClose: 5000 });
+			toast.update(toast_id, { render: 'Empty', type: "warning", isLoading: false, autoClose: 5000 });
 		} else {
 			// Scarico i dati trovati
 			toast.update(toast_id, { render: 'Downloaded', type: "success", isLoading: false, autoClose: 5000 });

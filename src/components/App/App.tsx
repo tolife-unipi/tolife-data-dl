@@ -27,8 +27,10 @@ export default class App extends Component<{},AppState>{
 				<ToastContainer
 					position="top-right"
 					newestOnTop={true}
-					closeOnClick={true}
+					closeOnClick={false}
 					hideProgressBar={true}
+					pauseOnFocusLoss={false}
+					pauseOnHover={false}
 					theme="dark"
 				/>
 				<header>
