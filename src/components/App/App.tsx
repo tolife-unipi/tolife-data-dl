@@ -28,7 +28,7 @@ export default class App extends Component<{},AppState>{
 					position="top-right"
 					newestOnTop={true}
 					closeOnClick={false}
-					hideProgressBar={true}
+					hideProgressBar={false}
 					pauseOnFocusLoss={false}
 					pauseOnHover={false}
 					theme="dark"

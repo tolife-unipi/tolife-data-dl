@@ -21,6 +21,15 @@ body {
 }
 
 
+:root {
+	--toastify-color-progress-dark: #{$base-color} !important;
+	--toastify-color-info: #{$base-color} !important;
+	--toastify-color-success: #{$base-color} !important;
+	--toastify-color-warning: #{$base-color} !important;
+	--toastify-color-error: #{$base-color} !important;
+	
+}
+
 .Toastify__toast {
 	border: 1px solid $base-color;
 	background-color: color.adjust($background-color, $whiteness: 8%);
