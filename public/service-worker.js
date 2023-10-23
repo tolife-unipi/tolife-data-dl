@@ -1,4 +1,4 @@
-const VERSION = process.env.APP_VERSION;
+const VERSION = "v1.0.0";
 const CACHE_NAME = "cache" + VERSION;
 
 self.addEventListener('install', (event) => {
