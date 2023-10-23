@@ -32,15 +32,15 @@ export default class Downloader {
 	async fetchData(kits:string[], devices:{[device:string]: string[]}, start_date:Date, end_date:Date) {
 
 		/** [device, sensor, Response] */
-		const bucket = new PromiseBucket<[string,string,Response]>(1);
+		const bucket = new PromiseBucket<[string,string,Response]>(5);
 
 		for(const device in devices) {
 			const sensors = devices[device]
 			for(const sensor of sensors){
 
 				// DA RIMUOVERE QUANDO IL SERVER SARÀ DECENTE
-				await new Promise(r => setTimeout(r, 10000));
-				this.api.authorize();
+				// await new Promise(r => setTimeout(r, 10000));
+				// this.api.authorize();
 				/////////////////////////////////////////////
 
 				await bucket.put(
