@@ -32,7 +32,7 @@ export default class Downloader {
 	async fetchData(kits:string[], devices:{[device:string]: string[]}, start_date:Date, end_date:Date) {
 
 		/** [device, sensor, Response] */
-		const bucket = new PromiseBucket<[string,string,Response]>(5);
+		const bucket = new PromiseBucket<[string,string,string,Response]>(5);
 
 		for(const device in devices) {
 			const sensors = devices[device]
@@ -43,13 +43,16 @@ export default class Downloader {
 				// this.api.authorize();
 				/////////////////////////////////////////////
 
-				await bucket.put(
-					this.api.getSensorsData(sensor, start_date.toJSON(), end_date.toJSON())
-					.then(
-						res => [device,sensor,res], 
-						err => [device,sensor,new Response((err as Error).message, {status:500})]
-					)
-				);
+				for(const kit of kits){
+
+					await bucket.put(
+						this.api.getSensorsData(kit, sensor, start_date.toJSON(), end_date.toJSON())
+						.then(
+							res => [kit,device,sensor,res], 
+							err => [kit,device,sensor,new Response((err as Error).message, {status:500})]
+						)
+					);
+				}
 			}
 		}
 
@@ -60,18 +63,18 @@ export default class Downloader {
 		};
 
 		console.debug('start_date: ' + start_date + '\nend_date: ' + end_date);
-		for await (const [device,sensor,res] of bucket.iter()){
+		for await (const [kit,device,sensor,res] of bucket.iter()){
 			// Nel caso ci fosse qualche errore
 			if(!res.ok){
-				toast.error(`${device}.${sensor}: ${await res.text()}`, {autoClose: 5000});
+				toast.error(`${kit}.${device}.${sensor}: ${await res.text()}`, {autoClose: 5000});
 				continue;
 			}
 
 			const content = await res.json() as SensorData[];
 
-			console.debug(`${device}.${sensor}: ${content.length.toString()}`);
+			console.debug(`${kit}.${device}.${sensor}: ${content.length.toString()}`);
 
-			for(const kit of kits){
+			/*for(const kit of kits){
 				let tmp = content.filter((elem => elem.kitId == kit));
 				console.debug(`- ${device}.${sensor}.${kit}: ${tmp.length.toString()}`);
 
@@ -81,7 +84,11 @@ export default class Downloader {
 				if(data.entries[kit][device] === undefined) data.entries[kit][device] = {};
 
 				data.entries[kit][device][sensor] = tmp;
-			}
+			}*/
+
+			if(data.entries[kit] === undefined) data.entries[kit] = {};
+			if(data.entries[kit][device] === undefined) data.entries[kit][device] = {};
+			data.entries[kit][device][sensor] = content;
 		}
 
 		return data;

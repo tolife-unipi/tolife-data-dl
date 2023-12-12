@@ -36,10 +36,10 @@ export default class API {
 	}
 
 	/** Restituisce i dati dei sensori presi dal database */
-	async getSensorsData(sensor_name:string, start_date:string, end_date:string): Promise<Response> {
+	async getSensorsData(kit_id:string, sensor_name:string, start_date:string, end_date:string): Promise<Response> {
 		if(!this.expires || this.expires < new Date()) await this.authorize();
 
-		const url = new URL(`sensors/${sensor_name}/filterByDate`,this.url);
+		const url = new URL(`sensors/${sensor_name}/kit/${kit_id}/filter`,this.url);
 		url.search = new URLSearchParams({
 			start_date: start_date,
 			end_date: end_date 

@@ -113,7 +113,7 @@ export default class Dashboard extends Component<DashboardProps,DashboardState> 
 							name='kits_id'
 							id='kits_id'
 							onChange={this.kitIdsInputHandler}
-							pattern="^\w+(\s*,\s*\w+)*"
+							pattern="[A-Z]+-\d+"
 							placeholder="64, 32, 123, ..."
 							required={true}
 						/>
